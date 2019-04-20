@@ -1,0 +1,121 @@
+#testID {
+  color: #f2acb9;
+  color: #bf8097;
+  color: #6b4b9b;
+  color: #364a73;
+  color: #0d0d0d; }
+
+body {
+  font-family: 'Quicksand', sans-serif; }
+
+.container {
+  min-width: 75%; }
+
+#mainNavbar {
+  opacity: 0.7;
+  box-shadow: 2px 2px 5px #364a73;
+  opacity: 0.9; }
+
+#gameNavbar {
+  opacity: 0.7;
+  box-shadow: 2px 2px 5px #364a73;
+  opacity: 0.9; }
+
+.navbar.scrolled {
+  background: #6b4b9b;
+  transition: background 500ms;
+  color: white; }
+  .navbar.scrolled .navbar-brand {
+    color: white; }
+  .navbar.scrolled .nav-link {
+    color: white; }
+
+.dropdown-item {
+  color: white; }
+
+#mainHeader {
+  position: relative;
+  min-height: 250px;
+  background: url(https://live.staticflickr.com/4560/39021498702_27c1d0a7f9_o.jpg);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: contain;
+  text-align: center;
+  color: white;
+  opacity: 0.9; }
+
+#witcherHeader {
+  position: relative;
+  min-height: 300px;
+  background: url(https://live.staticflickr.com/916/42904033914_439aa5635f_o.png);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: contain;
+  text-align: center;
+  color: white;
+  opacity: 0.9; }
+
+#blogHeader {
+  position: relative;
+  min-height: 250px;
+  background: url(../img/Uncharted4One.jpg);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: contain;
+  text-align: center;
+  color: white;
+  opacity: 0.9; }
+
+.jumbotron {
+  margin-top: 2rem;
+  background-color: transparent; }
+
+.bg-custom {
+  background: #6C778C; }
+
+hr {
+  border: 0;
+  height: 5px;
+  background-image: -webkit-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+  background-image: -moz-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+  background-image: -ms-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+  background-image: -o-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0); }
+
+#games h1 {
+  border-bottom: 1px #6b4b9b dotted; }
+#games img {
+  margin-top: -50px;
+  border: 1px solid black; }
+#games .card:hover {
+  background: #364a73;
+  color: white; }
+#games .btn:hover {
+  background: white;
+  color: #bf8097;
+  font-weight: 700; }
+
+#characterBios .card:hover {
+  background: #364a73;
+  color: white; }
+#characterBios .btn:hover {
+  background: white;
+  color: #bf8097;
+  font-weight: 700; }
+
+#video-play {
+  position: relative;
+  min-height: 200px;
+  background: url(../img/witcher_3_wild_hunt_concept_art-wallpaper-2400x1350.jpg);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-position: 0 -300px;
+  text-align: center;
+  color: #fff; }
+
+#video-play a {
+  color: #fff; }
+
+.carousel-image {
+  background-size: cover; }
+
+/*# sourceMappingURL=style.css.map */
