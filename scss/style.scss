@@ -72,8 +72,22 @@ body {
 
 #witcherHeader {
   position: relative;
-  min-height: 300px;
+  
+  max-height: 100%;
   background: url(https://live.staticflickr.com/916/42904033914_439aa5635f_o.png);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: contain;  
+  text-align: center;
+  color: white;
+  opacity: 0.9;
+}
+
+#RedDeadHeader {
+  position: relative;
+  
+  max-height: 100%;
+  background: url(https://live.staticflickr.com/7853/46485308402_c9793a4c44_k.jpg);
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-size: contain;  
@@ -103,9 +117,7 @@ body {
   background: #6C778C;
 }
 
-// .card img {
-//   margin-top: -70px;
-// }
+
 
 hr {
   border: 0; 
@@ -157,11 +169,27 @@ hr {
   background-position: 0 -300px;
   text-align: center;
   color: #fff;
+
+  a {
+    color: white;
+  }
 }
 
-#video-play a {
+#video-playRed {
+  position: relative;
+  min-height: 200px;
+  background: url(../img/witcher_3_wild_hunt_concept_art-wallpaper-2400x1350.jpg);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-position: 0 -300px;
+  text-align: center;
   color: #fff;
+  a {
+    color: white;
+  }
 }
+
+
 
 // .dark-overlay {
 //   position: relative;
