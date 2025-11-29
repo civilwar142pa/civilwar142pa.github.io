@@ -47,6 +47,8 @@ async function loadBooksFromGoogleSheets() {
         updateStatus('Loading books from Google Sheets...');
         
         const SHEET_ID = CONFIG.googleSheetsUrl;
+        console.log('Sheet ID:', SHEET_ID);
+        
         if (!SHEET_ID || SHEET_ID === 'YOUR_SHEET_ID_HERE') {
             throw new Error('Please set your Google Sheet ID in the CONFIG section');
         }
@@ -55,28 +57,41 @@ async function loadBooksFromGoogleSheets() {
         const timestamp = new Date().getTime();
         const jsonUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&_=${timestamp}`;
         
+        console.log('Fetching from URL:', jsonUrl);
+        
         const response = await fetch(jsonUrl);
+        console.log('Response status:', response.status, response.ok);
+        
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const text = await response.text();
+        console.log('Response text length:', text.length);
+        console.log('First 200 chars:', text.substring(0, 200));
         
         // Parse the special Google format
         const json = JSON.parse(text.substring(47).slice(0, -2));
+        console.log('Parsed JSON:', json);
+        
         const sheetData = json.table.rows;
+        console.log('Sheet data rows:', sheetData.length);
         
         // Process the data with YOUR column names
         books = sheetData.map((row, index) => {
             const cells = row.c;
-            return {
+            const bookData = {
                 title: cells[0] ? (cells[0].v || '').toString().trim() : '',
                 author: cells[1] ? (cells[1].v || '').toString().trim() : '',
                 status: cells[2] ? (cells[2].v || 'future option').toString().toLowerCase().trim() : 'future option',
                 link: cells[3] ? (cells[3].v || '').toString().trim() : '',
                 rowIndex: index + 1
             };
+            console.log(`Book ${index}:`, bookData);
+            return bookData;
         }).filter(book => book.title && book.title !== ''); // Filter out empty rows
+        
+        console.log('Filtered books:', books.length);
         
         // Categorize books by status - IMPROVED VERSION
         availableBooks = books.filter(book => 
@@ -93,6 +108,12 @@ async function loadBooksFromGoogleSheets() {
             book.status.includes('read') ||
             book.read // Include books marked as read locally
         );
+
+        console.log('Categorized:', {
+            available: availableBooks.length,
+            currentlyReading: currentlyReadingBooks.length,
+            finished: finishedBooks.length
+        });
 
         // If there's a currently reading book, set it as current - BUT only if we don't already have one
         if (currentlyReadingBooks.length > 0 && !currentBook) {
@@ -113,6 +134,8 @@ async function loadBooksFromGoogleSheets() {
             finished: finishedBooks.length
         });
         
+        showNotification(`Successfully loaded ${books.length} books from Google Sheets!`, 'success');
+        
     } catch (error) {
         console.error('Error loading Google Sheets data:', error);
         updateStatus('Error loading books: ' + error.message);
@@ -129,6 +152,7 @@ function loadBooksFromLocalStorage() {
         books = JSON.parse(savedBooks);
         availableBooks = books.filter(book => !book.read);
         finishedBooks = books.filter(book => book.read);
+        console.log('Loaded books from local storage:', books.length);
     } else {
         // Sample data for testing
         availableBooks = [
@@ -136,6 +160,7 @@ function loadBooksFromLocalStorage() {
             { title: "Sample Book 2", author: "Author Two", status: "future option", link: "" }
         ];
         books = [...availableBooks];
+        console.log('Using sample books - no local storage data found');
     }
 }
 
