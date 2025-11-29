@@ -1,0 +1,3 @@
+icon-128.png
+book-club.png (512x512)
+book-reading.png (512x512)
