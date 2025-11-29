@@ -52,23 +52,48 @@ async function loadBooksFromGoogleSheets() {
             throw new Error('Please set your Google Sheet ID in the CONFIG section');
         }
         
-        // ADD TIMESTAMP TO PREVENT CACHING
+        // Use CORS proxy to bypass restrictions
         const timestamp = new Date().getTime();
-        const jsonUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&_=${timestamp}`;
+        const googleSheetsUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&_=${timestamp}`;
         
-        // Show debug info
-        document.getElementById('random-result').innerHTML = `
-            <div class="error-message">
-                🔧 Debug: Loading from Google Sheets...<br>
-                Sheet ID: ${SHEET_ID}<br>
-                URL: ${jsonUrl.substring(0, 80)}...
-            </div>
-        `;
+        // Try different CORS proxies - one of these should work
+        const proxyUrls = [
+            `https://api.allorigins.win/raw?url=${encodeURIComponent(googleSheetsUrl)}`,
+            `https://cors-anywhere.herokuapp.com/${googleSheetsUrl}`,
+            `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(googleSheetsUrl)}`,
+            googleSheetsUrl // Try direct as fallback
+        ];
         
-        const response = await fetch(jsonUrl);
+        let response;
+        let lastError;
         
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        // Try each proxy until one works
+        for (const proxyUrl of proxyUrls) {
+            try {
+                console.log(`Trying proxy: ${proxyUrl.substring(0, 50)}...`);
+                response = await fetch(proxyUrl, {
+                    method: 'GET',
+                    mode: 'cors',
+                    headers: {
+                        'Accept': 'application/json',
+                    }
+                });
+                
+                if (response.ok) {
+                    console.log(`Success with proxy: ${proxyUrl.substring(0, 30)}...`);
+                    break;
+                } else {
+                    lastError = `HTTP ${response.status} from proxy`;
+                }
+            } catch (error) {
+                lastError = error.message;
+                console.log(`Proxy failed: ${error.message}`);
+                // Continue to next proxy
+            }
+        }
+        
+        if (!response || !response.ok) {
+            throw new Error(`All proxies failed. Last error: ${lastError}`);
         }
         
         const text = await response.text();
@@ -89,7 +114,7 @@ async function loadBooksFromGoogleSheets() {
             };
         }).filter(book => book.title && book.title !== ''); // Filter out empty rows
         
-        // Categorize books by status - IMPROVED VERSION
+        // Categorize books by status
         availableBooks = books.filter(book => 
             book.status.includes('future') || 
             book.status === '' || 
@@ -97,17 +122,16 @@ async function loadBooksFromGoogleSheets() {
         );
         currentlyReadingBooks = books.filter(book => 
             book.status.includes('currently') && 
-            !book.read // Don't include books that are marked as read locally
+            !book.read
         );
         finishedBooks = books.filter(book => 
             book.status.includes('finished') || 
             book.status.includes('read') ||
-            book.read // Include books marked as read locally
+            book.read
         );
 
-        // If there's a currently reading book, set it as current - BUT only if we don't already have one
+        // Set current book if available
         if (currentlyReadingBooks.length > 0 && !currentBook) {
-            // Don't set a currently reading book if it's already marked as finished locally
             const validCurrentlyReading = currentlyReadingBooks.filter(book => !book.read);
             if (validCurrentlyReading.length > 0) {
                 currentBook = {
@@ -118,28 +142,11 @@ async function loadBooksFromGoogleSheets() {
             }
         }
         
-        // Show success message
-        document.getElementById('random-result').innerHTML = `
-            <div class="success-message">
-                ✅ Success! Loaded ${books.length} books from Google Sheets<br>
-                Available: ${availableBooks.length} | Reading: ${currentlyReadingBooks.length} | Finished: ${finishedBooks.length}
-            </div>
-        `;
-        
         showNotification(`Successfully loaded ${books.length} books from Google Sheets!`, 'success');
         
     } catch (error) {
         console.error('Error loading Google Sheets data:', error);
-        updateStatus('Error loading books: ' + error.message);
-        
-        // Show error message visually
-        document.getElementById('random-result').innerHTML = `
-            <div class="error-message">
-                ❌ Google Sheets Error: ${error.message}<br>
-                Falling back to local storage...
-            </div>
-        `;
-        
+        updateStatus('Error: ' + error.message);
         showNotification('Failed to load Google Sheets. Using local storage.', 'error');
         loadBooksFromLocalStorage();
     }
@@ -630,35 +637,41 @@ async function testGoogleSheet() {
     const SHEET_ID = CONFIG.googleSheetsUrl;
     const testUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
     
-    document.getElementById('random-result').innerHTML = `
+    const resultElement = document.getElementById('random-result');
+    resultElement.innerHTML = `
         <div class="error-message">
-            Testing connection to: ${testUrl}
+            Testing connection to Google Sheets...
         </div>
     `;
     
-    try {
-        const response = await fetch(testUrl);
-        if (response.ok) {
-            document.getElementById('random-result').innerHTML = `
-                <div class="success-message">
-                    ✅ Google Sheet is accessible!<br>
-                    Status: ${response.status}
-                </div>
-            `;
-        } else {
-            document.getElementById('random-result').innerHTML = `
-                <div class="error-message">
-                    ❌ Google Sheet error: ${response.status} ${response.statusText}
-                </div>
-            `;
+    // Test both direct and proxy connections
+    const testUrls = [
+        { name: 'Direct', url: testUrl },
+        { name: 'AllOrigins Proxy', url: `https://api.allorigins.win/raw?url=${encodeURIComponent(testUrl)}` },
+        { name: 'CodeTabs Proxy', url: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(testUrl)}` }
+    ];
+    
+    let results = [];
+    
+    for (const test of testUrls) {
+        try {
+            const response = await fetch(test.url, { method: 'GET', mode: 'cors' });
+            if (response.ok) {
+                results.push(`✅ ${test.name}: SUCCESS (${response.status})`);
+            } else {
+                results.push(`❌ ${test.name}: FAILED (${response.status})`);
+            }
+        } catch (error) {
+            results.push(`❌ ${test.name}: ERROR (${error.message})`);
         }
-    } catch (error) {
-        document.getElementById('random-result').innerHTML = `
-            <div class="error-message">
-                ❌ Network error: ${error.message}
-            </div>
-        `;
     }
+    
+    resultElement.innerHTML = `
+        <div class="error-message">
+            <strong>Connection Test Results:</strong><br>
+            ${results.join('<br>')}
+        </div>
+    `;
 }
 
 // Clear all local data
