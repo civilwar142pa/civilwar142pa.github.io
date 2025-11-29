@@ -4,8 +4,7 @@
     <link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book Club Manager</title>
-    <script src="https://unpkg.com/@discord/embedded-app-sdk@0.1.9"></script>
+    <title>Book Club Manager - Keyboard Edition</title>
 </head>
 
 <body>
@@ -14,48 +13,51 @@
         <div class="header">
             <h1>📚 Book Club Manager</h1>
             <div class="session-controls">
-                <button id="export-data-btn" class="secondary-btn">Export Data</button>
-                <button id="reset-session-btn" class="danger">Reset Session</button>
-                <button id="refresh-books-btn" class="primary">🔄 Refresh Books</button>
+                <span class="keyboard-hint">🎮 Use keyboard controls</span>
             </div>
-        </div>
-
-        <!-- Discord Status Indicator -->
-        <div id="discord-status" style="display: none;" class="success-message">
-            ✅ Connected to Discord
         </div>
 
         <!-- Current Book Section -->
         <div class="section">
             <h2>📖 Currently Reading</h2>
             <div id="current-book" class="current-book-card">
-                <div class="no-book" id="no-book-message">
-                    <p>No book selected. Pick one from the randomizer!</p>
+                <div class="no-book">
+                    <p>No book selected. Press <kbd>1</kbd> or <kbd>R</kbd> to pick one!</p>
                 </div>
             </div>
         </div>
 
-        <!-- Book Randomizer Section -->
+        <!-- Quick Actions -->
         <div class="section">
-            <h2>🎲 Book Randomizer</h2>
-            <div class="randomizer-controls">
-                <div class="action-buttons">
-                    <button id="pick-random-btn" class="primary">Pick Next Book! 🎯</button>
-                    <button id="show-history-btn" class="secondary-btn">View History</button>
-                    <button id="open-sheet-btn" class="resource-btn">📚 Open Book Sheet</button>
+            <h2>🎮 Quick Actions</h2>
+            <div class="keyboard-controls">
+                <div class="control-group">
+                    <kbd>1</kbd> - Random Book • 
+                    <kbd>2</kbd> - 25% • 
+                    <kbd>3</kbd> - 50% • 
+                    <kbd>4</kbd> - 75% • 
+                    <kbd>5</kbd> - Finish
+                </div>
+                <div class="control-group">
+                    <kbd>R</kbd> - Random • 
+                    <kbd>N</kbd> - New Question • 
+                    <kbd>F</kbd> - Finish • 
+                    <kbd>C</kbd> - Change • 
+                    <kbd>H</kbd> - Help
                 </div>
             </div>
+        </div>
 
-            <div id="random-result"></div>
-            <div id="book-history" class="history-panel" style="display: none;">
-                <h3>Reading History</h3>
-                <div id="history-list"></div>
-                <button id="close-history-btn" class="secondary-btn">Close History</button>
+        <!-- Results & Messages -->
+        <div id="random-result" class="section">
+            <div class="success-message">
+                Welcome! Press <kbd>H</kbd> for help
             </div>
         </div>
-            
-        <div class="books-container">
-            <h3>Available Books (<span id="available-count">0</span>)</h3>
+
+        <!-- Available Books -->
+        <div class="section">
+            <h2>📚 Available Books (<span id="available-count">0</span>)</h2>
             <div id="book-list" class="item-list"></div>
         </div>
 
@@ -63,40 +65,14 @@
         <div class="section">
             <h2>💬 Discussion Questions</h2>
             <div class="input-group">
-                <input type="text" id="new-question-input" placeholder="Add a discussion question...">
-                <button id="add-question-btn" class="primary">Add Question</button>
+                <input type="text" id="question-input" placeholder="Press N to add a question, then type and press ENTER...">
             </div>
             <div id="questions-list" class="item-list"></div>
         </div>
 
-        <!-- Progress Controls (for current book) -->
-        <div id="progress-controls" style="display: none;">
-            <!-- This will be populated by JavaScript -->
-        </div>
-
-        <!-- Resources -->
-        <div class="section">
-            <h2>🔗 Resources</h2>
-            <div class="resources">
-                <button id="master-list-btn" class="resource-btn">📚 Master Book List</button>
-            </div>
-        </div>
-
-        <!-- Debug Tools -->
-        <div class="section">
-            <h2>🔧 Debug Tools</h2>
-            <div class="resources">
-                <button id="test-sheets-btn" class="resource-btn">Test Google Sheets</button>
-                <button id="test-discord-btn" class="resource-btn">Test Discord SDK</button>
-                <button id="simple-test-btn" class="resource-btn">Simple Function Test</button>
-                <button id="clear-data-btn" class="danger">Clear All Data</button>
-                <button id="test-discord-sheets-btn" class="resource-btn">Test Discord Sheets</button>
-            </div>
-        </div>
-
         <!-- Status -->
         <div class="status-bar">
-            <span id="status-message">Ready to load books...</span>
+            <span id="status-message">Press H for help</span>
         </div>
     </div>
     <script src="script.js"></script>
