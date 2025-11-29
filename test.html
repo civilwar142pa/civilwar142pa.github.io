@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Sheets Test</title>
+    <style>
+        body { background: #2f3136; color: white; font-family: Arial; padding: 20px; }
+        .success { background: green; padding: 10px; margin: 5px; }
+        .error { background: red; padding: 10px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Google Sheets Connection Test</h1>
+    <div id="status">Testing...</div>
+    
+    <script>
+        async function testGoogleSheets() {
+            const SHEET_ID = '1TRraVAkBbpZHz0oLLe0TRkx9i8F4OwAUMkP4gm74nYs';
+            const status = document.getElementById('status');
+            
+            try {
+                status.innerHTML = '<div class="error">Step 1: Starting test...</div>';
+                
+                const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+                status.innerHTML += `<div class="error">Step 2: URL: ${url}</div>`;
+                
+                const response = await fetch(url);
+                status.innerHTML += `<div class="error">Step 3: Response status: ${response.status}</div>`;
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const text = await response.text();
+                status.innerHTML += `<div class="error">Step 4: Got text, length: ${text.length}</div>`;
+                
+                const json = JSON.parse(text.substring(47).slice(0, -2));
+                const rows = json.table.rows;
+                status.innerHTML += `<div class="error">Step 5: Parsed ${rows.length} rows</div>`;
+                
+                // Show first book
+                if (rows.length > 0 && rows[0].c[0]) {
+                    const firstBook = rows[0].c[0].v;
+                    status.innerHTML += `<div class="success">✅ SUCCESS! First book: "${firstBook}"</div>`;
+                } else {
+                    status.innerHTML += `<div class="error">❌ No book data found in sheet</div>`;
+                }
+                
+            } catch (error) {
+                status.innerHTML += `<div class="error">❌ ERROR at step: ${error.message}</div>`;
+            }
+        }
+        
+        // Run test when page loads
+        testGoogleSheets();
+    </script>
+</body>
+</html>

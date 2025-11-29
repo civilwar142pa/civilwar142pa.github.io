@@ -5,21 +5,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Club Manager</title>
-
-    <!-- Discord Integration-->
-    <script src="https://unpkg.com/@discord/embedded-app-sdk@1.0.0"></script>
+    <script src="https://unpkg.com/@discord/embedded-app-sdk@0.1.9"></script>
 </head>
 
 <body>
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>📚 Booq Club Manager</h1>
+            <h1>📚 Book Club Manager</h1>
             <div class="session-controls">
-                <button onclick="exportData()">Export Data</button>
-                <button onclick="resetSession()" class="danger">Reset Session</button>
-                <button onclick="refreshBooks()" class="primary">🔄 Refresh Books</button>
+                <button id="export-data-btn" class="secondary-btn">Export Data</button>
+                <button id="reset-session-btn" class="danger">Reset Session</button>
+                <button id="refresh-books-btn" class="primary">🔄 Refresh Books</button>
             </div>
+        </div>
+
+        <!-- Discord Status Indicator -->
+        <div id="discord-status" style="display: none;" class="success-message">
+            ✅ Connected to Discord
         </div>
 
         <!-- Current Book Section -->
@@ -37,9 +40,9 @@
             <h2>🎲 Book Randomizer</h2>
             <div class="randomizer-controls">
                 <div class="action-buttons">
-                    <button onclick="pickRandomBook()" class="primary">Pick Next Book! 🎯</button>
-                    <button onclick="showBookHistory()">View History</button>
-                    <button onclick="openLink(CONFIG.bookListUrl)" class="resource-btn">📚 Open Book Sheet</button>
+                    <button id="pick-random-btn" class="primary">Pick Next Book! 🎯</button>
+                    <button id="show-history-btn" class="secondary-btn">View History</button>
+                    <button id="open-sheet-btn" class="resource-btn">📚 Open Book Sheet</button>
                 </div>
             </div>
 
@@ -47,43 +50,49 @@
             <div id="book-history" class="history-panel" style="display: none;">
                 <h3>Reading History</h3>
                 <div id="history-list"></div>
-                <button onclick="hideBookHistory()">Close History</button>
+                <button id="close-history-btn" class="secondary-btn">Close History</button>
             </div>
         </div>
             
-            <div class="books-container">
-                <h3>Available Books (<span id="available-count">0</span>)</h3>
-                <div id="book-list" class="item-list"></div>
-            </div>
-            
-    
+        <div class="books-container">
+            <h3>Available Books (<span id="available-count">0</span>)</h3>
+            <div id="book-list" class="item-list"></div>
+        </div>
 
         <!-- Discussion Questions -->
         <div class="section">
             <h2>💬 Discussion Questions</h2>
             <div class="input-group">
-                <input type="text" id="new-question" placeholder="Add a discussion question..." onkeypress="handleQuestionKeypress(event)">
-                <button onclick="addQuestion()">Add Question</button>
+                <input type="text" id="new-question-input" placeholder="Add a discussion question...">
+                <button id="add-question-btn" class="primary">Add Question</button>
             </div>
             <div id="questions-list" class="item-list"></div>
+        </div>
+
+        <!-- Progress Controls (for current book) -->
+        <div id="progress-controls" style="display: none;">
+            <!-- This will be populated by JavaScript -->
         </div>
 
         <!-- Resources -->
         <div class="section">
             <h2>🔗 Resources</h2>
             <div class="resources">
-                <button onclick="openLink(CONFIG.bookListUrl)" class="resource-btn">📚 Master Book List</button>
+                <button id="master-list-btn" class="resource-btn">📚 Master Book List</button>
             </div>
         </div>
 
-        <!-- Add this to your Resources section -->
-<div class="section">
-    <h2>🔧 Debug Tools</h2>
-    <div class="resources">
-        <button onclick="testGoogleSheet()" class="resource-btn">Test Google Sheet Connection</button>
-        <button onclick="clearAllData()" class="danger">Clear All Local Data</button>
-    </div>
-</div>
+        <!-- Debug Tools -->
+        <div class="section">
+            <h2>🔧 Debug Tools</h2>
+            <div class="resources">
+                <button id="test-sheets-btn" class="resource-btn">Test Google Sheets</button>
+                <button id="test-discord-btn" class="resource-btn">Test Discord SDK</button>
+                <button id="simple-test-btn" class="resource-btn">Simple Function Test</button>
+                <button id="clear-data-btn" class="danger">Clear All Data</button>
+                <button id="test-discord-sheets-btn" class="resource-btn">Test Discord Sheets</button>
+            </div>
+        </div>
 
         <!-- Status -->
         <div class="status-bar">
