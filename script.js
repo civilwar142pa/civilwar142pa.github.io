@@ -18,8 +18,8 @@ async function initializeDiscord() {
 // Configuration 
 const CONFIG = {
     googleSheetsUrl: '1TRraVAkBbpZHz0oLLe0TRkx9i8F4OwAUMkP4gm74nYs', // Just the sheet ID, not full URL
-    meetingNotesUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ5-gAZ6rbi9IDi-cIVEvQ85It9sXHXMPFCs6xVsntZv7ijfKPmYzfHpxPTn4BI-g8B2zAK_PPq2ACA/gviz/tq?tqx=out:json',
-    bookListUrl: 'https://docs.google.com/spreadsheets/d/1TRraVAkBbpZHz0oLLe0TRkx9i8F4OwAUMkP4gm74nYs/edit'
+    meetingNotesUrl: '',
+    bookListUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ5-gAZ6rbi9IDi-cIVEvQ85It9sXHXMPFCs6xVsntZv7ijfKPmYzfHpxPTn4BI-g8B2zAK_PPq2ACA/pubhtml'
 };
 
 // Data storage
@@ -47,7 +47,6 @@ async function loadBooksFromGoogleSheets() {
         updateStatus('Loading books from Google Sheets...');
         
         const SHEET_ID = CONFIG.googleSheetsUrl;
-        console.log('Sheet ID:', SHEET_ID);
         
         if (!SHEET_ID || SHEET_ID === 'YOUR_SHEET_ID_HERE') {
             throw new Error('Please set your Google Sheet ID in the CONFIG section');
@@ -57,41 +56,38 @@ async function loadBooksFromGoogleSheets() {
         const timestamp = new Date().getTime();
         const jsonUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&_=${timestamp}`;
         
-        console.log('Fetching from URL:', jsonUrl);
+        // Show debug info
+        document.getElementById('random-result').innerHTML = `
+            <div class="error-message">
+                🔧 Debug: Loading from Google Sheets...<br>
+                Sheet ID: ${SHEET_ID}<br>
+                URL: ${jsonUrl.substring(0, 80)}...
+            </div>
+        `;
         
         const response = await fetch(jsonUrl);
-        console.log('Response status:', response.status, response.ok);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const text = await response.text();
-        console.log('Response text length:', text.length);
-        console.log('First 200 chars:', text.substring(0, 200));
         
         // Parse the special Google format
         const json = JSON.parse(text.substring(47).slice(0, -2));
-        console.log('Parsed JSON:', json);
-        
         const sheetData = json.table.rows;
-        console.log('Sheet data rows:', sheetData.length);
         
         // Process the data with YOUR column names
         books = sheetData.map((row, index) => {
             const cells = row.c;
-            const bookData = {
+            return {
                 title: cells[0] ? (cells[0].v || '').toString().trim() : '',
                 author: cells[1] ? (cells[1].v || '').toString().trim() : '',
                 status: cells[2] ? (cells[2].v || 'future option').toString().toLowerCase().trim() : 'future option',
                 link: cells[3] ? (cells[3].v || '').toString().trim() : '',
                 rowIndex: index + 1
             };
-            console.log(`Book ${index}:`, bookData);
-            return bookData;
         }).filter(book => book.title && book.title !== ''); // Filter out empty rows
-        
-        console.log('Filtered books:', books.length);
         
         // Categorize books by status - IMPROVED VERSION
         availableBooks = books.filter(book => 
@@ -109,12 +105,6 @@ async function loadBooksFromGoogleSheets() {
             book.read // Include books marked as read locally
         );
 
-        console.log('Categorized:', {
-            available: availableBooks.length,
-            currentlyReading: currentlyReadingBooks.length,
-            finished: finishedBooks.length
-        });
-
         // If there's a currently reading book, set it as current - BUT only if we don't already have one
         if (currentlyReadingBooks.length > 0 && !currentBook) {
             // Don't set a currently reading book if it's already marked as finished locally
@@ -128,17 +118,28 @@ async function loadBooksFromGoogleSheets() {
             }
         }
         
-        console.log(`Loaded ${books.length} books:`, {
-            available: availableBooks.length,
-            currentlyReading: currentlyReadingBooks.length,
-            finished: finishedBooks.length
-        });
+        // Show success message
+        document.getElementById('random-result').innerHTML = `
+            <div class="success-message">
+                ✅ Success! Loaded ${books.length} books from Google Sheets<br>
+                Available: ${availableBooks.length} | Reading: ${currentlyReadingBooks.length} | Finished: ${finishedBooks.length}
+            </div>
+        `;
         
         showNotification(`Successfully loaded ${books.length} books from Google Sheets!`, 'success');
         
     } catch (error) {
         console.error('Error loading Google Sheets data:', error);
         updateStatus('Error loading books: ' + error.message);
+        
+        // Show error message visually
+        document.getElementById('random-result').innerHTML = `
+            <div class="error-message">
+                ❌ Google Sheets Error: ${error.message}<br>
+                Falling back to local storage...
+            </div>
+        `;
+        
         showNotification('Failed to load Google Sheets. Using local storage.', 'error');
         loadBooksFromLocalStorage();
     }
@@ -621,6 +622,50 @@ function openLink(url) {
         window.open(url, '_blank');
     } else {
         showNotification('Please update the link in the configuration', 'error');
+    }
+}
+
+// Test Google Sheet connection
+async function testGoogleSheet() {
+    const SHEET_ID = CONFIG.googleSheetsUrl;
+    const testUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+    
+    document.getElementById('random-result').innerHTML = `
+        <div class="error-message">
+            Testing connection to: ${testUrl}
+        </div>
+    `;
+    
+    try {
+        const response = await fetch(testUrl);
+        if (response.ok) {
+            document.getElementById('random-result').innerHTML = `
+                <div class="success-message">
+                    ✅ Google Sheet is accessible!<br>
+                    Status: ${response.status}
+                </div>
+            `;
+        } else {
+            document.getElementById('random-result').innerHTML = `
+                <div class="error-message">
+                    ❌ Google Sheet error: ${response.status} ${response.statusText}
+                </div>
+            `;
+        }
+    } catch (error) {
+        document.getElementById('random-result').innerHTML = `
+            <div class="error-message">
+                ❌ Network error: ${error.message}
+            </div>
+        `;
+    }
+}
+
+// Clear all local data
+function clearAllData() {
+    if (confirm('Clear ALL local data including questions and progress?')) {
+        localStorage.clear();
+        location.reload();
     }
 }
 
