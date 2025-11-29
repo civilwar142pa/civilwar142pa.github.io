@@ -1,19 +1,19 @@
 // Discord Integration
 let discordActivity = null;
 
-    // initialize Discord when app loads
-    async function initializeDiscord() {
-        try {
-            //check if running in Discord
-            if (window.DiscordSDK)  {
-                discordActivity = new DiscordSDK.ApplicationID('1444120600330240053'); // FILL THIS IN LATER
-                await discordActivity.ready();
-                console.log('Discord Activity initialized');
-            }
-        } catch (error) {
-            console.log('Discord Activity initialization failed:', error);
+// Initialize Discord when app loads
+async function initializeDiscord() {
+    try {
+        // Check if we're running in Discord
+        if (window.DiscordSDK) {
+            // Note: The correct syntax might be different - this is a common approach
+            discordActivity = window.DiscordSDK;
+            console.log('Discord SDK detected');
         }
+    } catch (error) {
+        console.log('Discord Activity initialization failed:', error);
     }
+}
 
 // Configuration 
 const CONFIG = {
@@ -32,6 +32,7 @@ let currentBook = null;
 
 // Initialize the application
 async function initialize() {
+    await initializeDiscord();
     updateStatus('Loading book club manager...');
     await loadBooksFromGoogleSheets();
     updateBookList();
@@ -50,7 +51,9 @@ async function loadBooksFromGoogleSheets() {
             throw new Error('Please set your Google Sheet ID in the CONFIG section');
         }
         
-        const jsonUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+        // ADD TIMESTAMP TO PREVENT CACHING
+        const timestamp = new Date().getTime();
+        const jsonUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&_=${timestamp}`;
         
         const response = await fetch(jsonUrl);
         if (!response.ok) {
@@ -75,35 +78,34 @@ async function loadBooksFromGoogleSheets() {
             };
         }).filter(book => book.title && book.title !== ''); // Filter out empty rows
         
-        // Categorize books by status
         // Categorize books by status - IMPROVED VERSION
-availableBooks = books.filter(book => 
-    book.status.includes('future') || 
-    book.status === '' || 
-    !book.status
-);
-currentlyReadingBooks = books.filter(book => 
-    book.status.includes('currently') && 
-    !book.read // Don't include books that are marked as read locally
-);
-finishedBooks = books.filter(book => 
-    book.status.includes('finished') || 
-    book.status.includes('read') ||
-    book.read // Include books marked as read locally
-);
+        availableBooks = books.filter(book => 
+            book.status.includes('future') || 
+            book.status === '' || 
+            !book.status
+        );
+        currentlyReadingBooks = books.filter(book => 
+            book.status.includes('currently') && 
+            !book.read // Don't include books that are marked as read locally
+        );
+        finishedBooks = books.filter(book => 
+            book.status.includes('finished') || 
+            book.status.includes('read') ||
+            book.read // Include books marked as read locally
+        );
 
-// If there's a currently reading book, set it as current - BUT only if we don't already have one
-if (currentlyReadingBooks.length > 0 && !currentBook) {
-    // Don't set a currently reading book if it's already marked as finished locally
-    const validCurrentlyReading = currentlyReadingBooks.filter(book => !book.read);
-    if (validCurrentlyReading.length > 0) {
-        currentBook = {
-            ...validCurrentlyReading[0],
-            progress: 0,
-            startDate: new Date().toISOString().split('T')[0]
-        };
-    }
-}
+        // If there's a currently reading book, set it as current - BUT only if we don't already have one
+        if (currentlyReadingBooks.length > 0 && !currentBook) {
+            // Don't set a currently reading book if it's already marked as finished locally
+            const validCurrentlyReading = currentlyReadingBooks.filter(book => !book.read);
+            if (validCurrentlyReading.length > 0) {
+                currentBook = {
+                    ...validCurrentlyReading[0],
+                    progress: 0,
+                    startDate: new Date().toISOString().split('T')[0]
+                };
+            }
+        }
         
         console.log(`Loaded ${books.length} books:`, {
             available: availableBooks.length,
@@ -118,6 +120,7 @@ if (currentlyReadingBooks.length > 0 && !currentBook) {
         loadBooksFromLocalStorage();
     }
 }
+
 
 // Local storage fallback
 function loadBooksFromLocalStorage() {
