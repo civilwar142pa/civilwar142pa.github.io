@@ -1,0 +1,17 @@
+{
+    "name": "Book Club Manager",
+    "description": "A custom book club activity with randomizer and discussion tools",
+    "version": "1.0.0",
+    "author": "Your Book Club",
+    "theme_color": "#7289da",
+    "icons": [
+        {
+            "src": "icon.png",
+            "sizes": "128x128",
+            "type": "image/png"
+        }
+    ],
+    "start_url": "/index.html",
+    "display": "fullscreen",
+    "orientation": "landscape"
+}

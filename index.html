@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Club Manager</title>
+
+    <!-- Discord Integration-->
+    <script src="https://unpkg.com/@discord/embedded-app-sdk@1.0.0"></script>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📚 Booq Club Manager</h1>
+            <div class="session-controls">
+                <button onclick="exportData()">Export Data</button>
+                <button onclick="resetSession()" class="danger">Reset Session</button>
+                <button onclick="refreshBooks()" class="primary">🔄 Refresh Books</button>
+            </div>
+        </div>
+
+        <!-- Current Book Section -->
+        <div class="section">
+            <h2>📖 Currently Reading</h2>
+            <div id="current-book" class="current-book-card">
+                <div class="no-book" id="no-book-message">
+                    <p>No book selected. Pick one from the randomizer!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Book Randomizer Section -->
+        <div class="section">
+            <h2>🎲 Book Randomizer</h2>
+            <div class="randomizer-controls">
+                <div class="action-buttons">
+                    <button onclick="pickRandomBook()" class="primary">Pick Next Book! 🎯</button>
+                    <button onclick="showBookHistory()">View History</button>
+                    <button onclick="openLink(CONFIG.bookListUrl)" class="resource-btn">📚 Open Book Sheet</button>
+                </div>
+            </div>
+
+            <div id="random-result"></div>
+            <div id="book-history" class="history-panel" style="display: none;">
+                <h3>Reading History</h3>
+                <div id="history-list"></div>
+                <button onclick="hideBookHistory()">Close History</button>
+            </div>
+        </div>
+            
+            <div class="books-container">
+                <h3>Available Books (<span id="available-count">0</span>)</h3>
+                <div id="book-list" class="item-list"></div>
+            </div>
+            
+    
+
+        <!-- Discussion Questions -->
+        <div class="section">
+            <h2>💬 Discussion Questions</h2>
+            <div class="input-group">
+                <input type="text" id="new-question" placeholder="Add a discussion question..." onkeypress="handleQuestionKeypress(event)">
+                <button onclick="addQuestion()">Add Question</button>
+            </div>
+            <div id="questions-list" class="item-list"></div>
+        </div>
+
+        <!-- Resources -->
+        <div class="section">
+            <h2>🔗 Resources</h2>
+            <div class="resources">
+                <button onclick="openLink(CONFIG.bookListUrl)" class="resource-btn">📚 Master Book List</button>
+            </div>
+        </div>
+
+        <!-- Status -->
+        <div class="status-bar">
+            <span id="status-message">Ready to load books...</span>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

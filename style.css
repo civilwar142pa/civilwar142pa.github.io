@@ -1,0 +1,437 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Whitney', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: #2f3136;
+    color: white;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.4;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.header h1 {
+    margin: 0;
+    color: #7289da;
+}
+
+.session-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.section {
+    background: #40444b;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.section h2 {
+    margin-top: 0;
+    color: #7289da;
+    border-bottom: 2px solid #36393f;
+    padding-bottom: 10px;
+}
+
+/* Current Book Styles */
+.current-book-card {
+    background: #36393f;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #7289da;
+}
+
+.no-book {
+    text-align: center;
+    padding: 30px;
+    color: #72767d;
+}
+
+.book-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.book-header h3 {
+    margin: 0;
+    flex: 1;
+}
+
+.book-link {
+    color: #7289da;
+    text-decoration: none;
+    font-size: 1.2em;
+    margin-left: 10px;
+}
+
+.book-link:hover {
+    color: #677bc4;
+}
+
+.book-meta {
+    color: #b9bbbe;
+    margin: 5px 0;
+    font-size: 0.95em;
+}
+
+/* Progress Section */
+.progress-section {
+    margin: 20px 0;
+}
+
+.progress-section label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.progress-bar {
+    flex: 1;
+    background: #2f3136;
+    height: 12px;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    background: #7289da;
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-weight: bold;
+    min-width: 40px;
+}
+
+.progress-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.progress-buttons input {
+    width: 80px;
+    padding: 6px;
+    background: #36393f;
+    border: 1px solid #72767d;
+    color: white;
+    border-radius: 4px;
+}
+
+.book-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* Button Styles */
+button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    transform: translateY(-1px);
+}
+
+.primary {
+    background: #7289da;
+    color: white;
+}
+
+.primary:hover {
+    background: #677bc4;
+}
+
+.danger {
+    background: #f04747;
+    color: white;
+}
+
+.danger:hover {
+    background: #d84040;
+}
+
+.secondary-btn {
+    background: #99aab5;
+    color: white;
+}
+
+.secondary-btn:hover {
+    background: #8a9ba5;
+}
+
+.finished-btn {
+    background: #43b581;
+    color: white;
+}
+
+.finished-btn:hover {
+    background: #3ca374;
+}
+
+.resource-btn {
+    background: #43b581;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.resource-btn:hover {
+    background: #3ca374;
+}
+
+.small-btn {
+    padding: 6px 12px;
+    font-size: 0.85em;
+}
+
+/* Randomizer Controls */
+.randomizer-controls {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.books-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.input-group input {
+    flex: 1;
+    padding: 10px;
+    background: #36393f;
+    border: 1px solid #72767d;
+    color: white;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #7289da;
+}
+
+/* Book List Styles */
+.books-container h3 {
+    margin-bottom: 15px;
+    color: #b9bbbe;
+}
+
+.item-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.book-item, .question-item {
+    background: #36393f;
+    padding: 15px;
+    border-radius: 6px;
+    border-left: 3px solid #7289da;
+    transition: transform 0.2s;
+}
+
+.book-item:hover, .question-item:hover {
+    transform: translateX(2px);
+}
+
+.book-details {
+    color: #b9bbbe;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+.question-item.answered {
+    opacity: 0.7;
+    border-left-color: #43b581;
+}
+
+.question-text {
+    flex: 1;
+}
+
+.question-actions {
+    display: flex;
+    gap: 5px;
+    margin-top: 8px;
+}
+
+/* Messages and Notifications */
+.success-message {
+    background: #43b581;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 15px 0;
+    text-align: center;
+}
+
+.error-message {
+    background: #f04747;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 15px 0;
+    text-align: center;
+}
+
+.no-items {
+    text-align: center;
+    color: #72767d;
+    font-style: italic;
+    padding: 30px;
+    background: #36393f;
+    border-radius: 6px;
+}
+
+/* History Panel */
+.history-panel {
+    background: #36393f;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 15px 0;
+    border: 2px solid #7289da;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.history-panel h3 {
+    margin-top: 0;
+    color: #7289da;
+    border-bottom: 1px solid #40444b;
+    padding-bottom: 10px;
+}
+
+.history-panel h4 {
+    color: #b9bbbe;
+    margin: 15px 0 8px 0;
+    font-size: 0.95em;
+}
+
+.history-item {
+    padding: 12px 15px;
+    margin: 8px 0;
+    background: #40444b;
+    border-radius: 6px;
+    border-left: 4px solid #99aab5;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.history-item:hover {
+    transform: translateX(2px);
+    background-color: #4a4c54;
+}
+
+
+.history-item.current {
+    border-left-color: #7289da;
+    background: rgba(114,137,218,0.1);
+}
+
+.history-item.finished {
+    border-left-color: #43b581;
+    background: rgba(67,181,129,0.1);
+}
+
+.history-item em {
+    color: #7289da;
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+.history-panel button {
+    margin-top: 15px;
+    width: 100%;
+}
+
+/* Status Bar */
+.status-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #36393f;
+    padding: 10px 20px;
+    border-top: 1px solid #40444b;
+    font-size: 0.9em;
+    color: #b9bbbe;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .session-controls {
+        justify-content: center;
+    }
+    
+    .progress-buttons {
+        justify-content: center;
+    }
+    
+    .book-actions {
+        flex-direction: column;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .input-group {
+        flex-direction: column;
+    }
+}
